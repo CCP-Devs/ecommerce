@@ -1,6 +1,28 @@
+import PropTypes from 'prop-types';
 import Head from 'next/head';
+import stripeClient from '../client';
 
-export default function Home() {
+export const getStaticProps = async () => {
+  const { data: products } = await stripeClient.products.list({
+    active: true
+  });
+
+  return {
+    props: {
+      products
+    }
+  };
+};
+
+const propTypes = {
+  products: PropTypes.arrayOf(PropTypes.object).isRequired
+};
+
+const Home = ({
+  products
+}) => {
+  const numberOfProducts = products.length;
+
   return (
     <div className="container mx-auto w-full">
       <Head>
@@ -59,6 +81,18 @@ export default function Home() {
             </p>
           </a>
         </div>
+        <span>
+          Number of total Products:
+          {numberOfProducts}
+        </span>
+        <ul>
+          {products.map((obj) => {
+            console.info('Product Objects from Stripe: ', obj);
+            return (
+              <li>{obj.name}</li>
+            );
+          })}
+        </ul>
       </main>
 
       <footer>
@@ -224,4 +258,7 @@ export default function Home() {
       </style>
     </div>
   );
-}
+};
+
+Home.propTypes = propTypes;
+export default Home;
