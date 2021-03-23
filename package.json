@@ -1,5 +1,5 @@
 {
-  "name": "learn-starter",
+  "name": "ccp-devs-ecommerce-store",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -15,6 +15,8 @@
     "@fortawesome/react-fontawesome": "^0.1.14",
     "@fullhuman/postcss-purgecss": "^4.0.3",
     "autoprefixer": "^10.2.5",
+    "babel-eslint": "^10.1.0",
+    "dotenv": "^8.2.0",
     "isomorphic-fetch": "^3.0.0",
     "lodash": "^4.17.21",
     "next": "^10.0.0",
@@ -24,5 +26,13 @@
     "react-dom": "17.0.1",
     "sass": "^1.32.8",
     "tailwindcss": "^2.0.4"
+  },
+  "devDependencies": {
+    "eslint": "^7.2.0",
+    "eslint-config-airbnb": "^18.2.1",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint-plugin-react": "^7.21.5",
+    "eslint-plugin-react-hooks": "^4.0.0"
   }
 }
