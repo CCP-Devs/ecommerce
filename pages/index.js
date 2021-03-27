@@ -33,26 +33,32 @@ const Home = ({ products }) => {
           NextJS and Tailwind Starter
         </h1>
       </header>
-      <main className="md:grid-cols-1">
+      <main className="my-5 flex flex-col justify-center items-center">
         {/* "my-5 flex flex-col justify-center items-center" */}
         <span>
           Number of total Products from stripe:
           {numberOfProducts}
         </span>
-        <ul>
+        <div className=" p-10 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 gap-5 ">
           {products.map((obj) => {
             // eslint-disable-next-line no-console
             console.info("Product Objects from Stripe: ", obj);
             return (
-              <ul>
-                <img src={`${obj.images}`} alt="" />
-                <li>{` ${obj.name}`}</li>
-                <li>{`Description: ${obj.description}`}</li>
-                <li>Price:</li>
+              <ul className="max-w-sm rounded overflow-hidden shadow-lg">
+                <img className="w-full" src={`${obj.images}`} alt="" />
+                <li className="text-center font-bold text-xl mb-2">{` ${obj.name}`}</li>
+                <li>
+                  <b>Description:</b>
+                  {` ${obj.description}`}
+                </li>
+                <li>
+                  <b>Price:</b>
+                  {` ${obj.data}`}
+                </li>
               </ul>
             );
           })}
-        </ul>
+        </div>
       </main>
       <footer className="mt-5 w-full flex flex-col justify-center items-center">
         <p>this is the footer</p>
