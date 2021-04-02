@@ -44,18 +44,21 @@ const Home = ({ products }) => {
             // eslint-disable-next-line no-console
             console.info("Product Objects from Stripe: ", obj);
             return (
-              <ul className="max-w-sm rounded overflow-hidden shadow-lg">
-                <img className="w-full" src={`${obj.images}`} alt="" />
-                <li className="text-center font-bold text-xl mb-2">{` ${obj.name}`}</li>
-                <li>
-                  <b>Description:</b>
-                  {` ${obj.description}`}
-                </li>
-                <li>
-                  <b>Price:</b>
-                  {` ${obj.data}`}
-                </li>
-              </ul>
+              <a href="/product">
+                <ul className="max-w-sm rounded overflow-hidden shadow-lg">
+                  <img className="w-full" src={`${obj.images}`} alt="" />
+                  <li className="text-center font-bold text-xl mb-2">{` ${obj.name}`}</li>
+                  <li>
+                    <b>Description:</b>
+                    {` ${obj.description}`}
+                  </li>
+
+                  <li>
+                    <b>Price:</b>
+                    {` ${obj.data}`}
+                  </li>
+                </ul>
+              </a>
             );
           })}
         </div>
