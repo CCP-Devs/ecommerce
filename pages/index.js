@@ -1,8 +1,9 @@
-import PropTypes from "prop-types";
-import Head from "next/head";
-import stripeClient from "../client";
+import Link from 'next/link';
+import PropTypes from 'prop-types';
+import Head from 'next/head';
+import stripeClient from '../client';
 
-export const getStaticProps = async () => {
+export async function getStaticProps() {
   const { data: products } = await stripeClient.products.list({
     active: true,
   });
@@ -12,7 +13,7 @@ export const getStaticProps = async () => {
       products,
     },
   };
-};
+}
 
 const propTypes = {
   products: PropTypes.arrayOf(PropTypes.object).isRequired,
@@ -28,7 +29,7 @@ const Home = ({ products }) => {
         <title>NextJS and Tailwind Starter</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <header>
+      <header className="bg-gray-200">
         <h1 className="title text-2xl w-full text-center">
           NextJS and Tailwind Starter
         </h1>
@@ -39,31 +40,35 @@ const Home = ({ products }) => {
           Number of total Products from stripe:
           {numberOfProducts}
         </span>
-        <div className=" p-10 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 gap-5 ">
+        <ul className="items-bottom min-h-full p-10 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 gap-5 ">
           {products.map((obj) => {
             // eslint-disable-next-line no-console
-            console.info("Product Objects from Stripe: ", obj);
+            console.info('Product Objects from Stripe: ', obj);
             return (
-              <a href="/product">
-                <ul className="max-w-sm rounded overflow-hidden shadow-lg">
-                  <img className="w-full" src={`${obj.images}`} alt="" />
-                  <li className="text-center font-bold text-xl mb-2">{` ${obj.name}`}</li>
-                  <li>
-                    <b>Description:</b>
-                    {` ${obj.description}`}
-                  </li>
+              <li className=" p-4 max-w-sm rounded overflow-hidden shadow-lg border-t">
+                <Link href="/product" props={products}>
+                  <div>
+                    <img className="w-full " src={obj.images} alt="" />
+                    <h1 className="text-center font-bold text-xl mb-2">
+                      {obj.name}
+                    </h1>
+                    <h2>
+                      <b>Description: </b>
+                      {obj.description}
+                    </h2>
 
-                  <li>
-                    <b>Price:</b>
-                    {` ${obj.data}`}
-                  </li>
-                </ul>
-              </a>
+                    <h2>
+                      <b>Price:</b>
+                      {obj.data}
+                    </h2>
+                  </div>
+                </Link>
+              </li>
             );
           })}
-        </div>
+        </ul>
       </main>
-      <footer className="mt-5 w-full flex flex-col justify-center items-center">
+      <footer className=" bg-gray-200 mt-5 w-full flex flex-col justify-center items-center">
         <p>this is the footer</p>
       </footer>
     </div>

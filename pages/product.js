@@ -1,20 +1,42 @@
-import { Component } from "react";
+import React from "react";
+import PropTypes from "prop-types";
+import stripeClient from "../client";
 
-export class product extends Component {
-  constructor() {
-    super();
-    this.state = {
-      item: "This is the product",
-    };
-  }
+export async function getStaticProps() {
+  const { data: products } = await stripeClient.products.list({
+    active: true,
+  });
 
-  render() {
-    const { item } = this.state;
-    return (
-      <div>
-        <h1><b>{item}</b></h1>
-      </div>
-    );
-  }
+  return {
+    props: {
+      products,
+    },
+  };
 }
-export default product;
+
+const propTypes = {
+  products: PropTypes.arrayOf(PropTypes.object).isRequired,
+};
+
+const Product = ({ products }) => {
+  // eslint-disable-next-line no-console
+  console.log(products);
+  return (
+    <ul>
+      Product
+      <li>
+        {products.map((obj) => {
+          // eslint-disable-next-line no-console
+          console.log(obj);
+          return (
+            <li>
+              {obj.name}
+            </li>
+          );
+        })}
+      </li>
+    </ul>
+  );
+};
+Product.propTypes = propTypes;
+export default Product;
