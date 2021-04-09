@@ -1,7 +1,7 @@
-import Link from 'next/link';
-import PropTypes from 'prop-types';
-import Head from 'next/head';
-import stripeClient from '../client';
+import Link from "next/link";
+import PropTypes from "prop-types";
+import Head from "next/head";
+import stripeClient from "../client";
 
 export async function getStaticProps() {
   const { data: products } = await stripeClient.products.list({
@@ -43,11 +43,11 @@ const Home = ({ products }) => {
         <ul className="items-bottom min-h-full p-10 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 gap-5 ">
           {products.map((obj) => {
             // eslint-disable-next-line no-console
-            console.info('Product Objects from Stripe: ', obj);
+            console.info("Product Objects from Stripe: ", obj);
             return (
               <li className=" p-4 max-w-sm rounded overflow-hidden shadow-lg border-t">
-                <Link href="/product" props={products}>
-                  <div>
+                <Link href="/product">
+                  <a>
                     <img className="w-full " src={obj.images} alt="" />
                     <h1 className="text-center font-bold text-xl mb-2">
                       {obj.name}
@@ -61,7 +61,7 @@ const Home = ({ products }) => {
                       <b>Price:</b>
                       {obj.data}
                     </h2>
-                  </div>
+                  </a>
                 </Link>
               </li>
             );

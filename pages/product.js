@@ -1,6 +1,6 @@
-import React from "react";
-import PropTypes from "prop-types";
-import stripeClient from "../client";
+import React from 'react';
+import PropTypes from 'prop-types';
+import stripeClient from '../client';
 
 export async function getStaticProps() {
   const { data: products } = await stripeClient.products.list({
