@@ -7,22 +7,42 @@ export async function getStaticProps() {
   const { data: products } = await stripeClient.products.list({
     active: true,
   });
-
+  const { data: prices } = await stripeClient.prices.list({
+    active: true,
+  });
+    // we want the unit_amount and .product
+    // isolate unit_amount from prices array, splice it into the product array
+  // prices.filter(product => product.id === "such and such")
+  const productsWithPrices = products.map((prod) => ({
+    id: prod.id,
+    images: prod.images,
+    description: prod.description,
+    name: prod.name,
+    price: 'Ill fix this later'
+  }
+  ));
   return {
     props: {
-      products,
+      productsWithPrices,
+      products
     },
   };
 }
 
 const propTypes = {
+  productsWithPrices: PropTypes.arrayOf(PropTypes.object).isRequired,
   products: PropTypes.arrayOf(PropTypes.object).isRequired,
+  prices: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
-const Home = ({ products }) => {
+const Home = ({ products, prices, productsWithPrices }) => {
   const numberOfProducts = products.length;
+  // // eslint-disable-next-line no-console
+  // console.log('prod', products);
+  // // eslint-disable-next-line no-console
+  // console.log('Price', prices);
   // eslint-disable-next-line no-console
-  console.log(products);
+  console.log(productsWithPrices);
   return (
     <div className="container mx-auto w-full">
       <Head>
