@@ -53,32 +53,27 @@ const ProductItem = ({ products }) => {
   // should this be a forEach? No, forEach does not return a value. For loop
   // doesn't work for some reason. Find out why. While also doesn't want to iterate.
   // Figure out what I'm doing wrong with the loop.
-  const i = 0;
-  while (i < numberOfProducts) {
-    if (id === productArray[i].id) {
-      // eslint-disable-next-line no-console
-      console.log(i);
-      return (
-        <div>
-          <img className="w-75 " src={productArray[i].images} alt="" />
-          <h1 className="text-center font-bold text-xl mb-2">
-            {productArray[i].name}
-          </h1>
-          <h2>
-            <b>Description: </b>
-            {productArray[i].description}
-          </h2>
+  const activeProd = productArray.filter((prod) => prod.id === id);
+  // eslint-disable-next-line no-console
+  console.log(activeProd[0].id);
 
-          <h2>
-            <b>Price:</b>
-            {productArray[i].data}
-          </h2>
-        </div>
-      );
-    // eslint-disable-next-line no-console
-    } console.log(i);
-    return (i + 1);
-  }
+  return (
+    <div>
+      <img className="w-75 " src={activeProd[0].images} alt="" />
+      <h1 className="text-center font-bold text-xl mb-2">
+        {activeProd[0].name}
+      </h1>
+      <h2>
+        <b>Description: </b>
+        {activeProd[0].description}
+      </h2>
+
+      <h2>
+        <b>Price:</b>
+        {activeProd[0].data}
+      </h2>
+    </div>
+  );
 };
 
 ProductItem.propTypes = propTypes;
