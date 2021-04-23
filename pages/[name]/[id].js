@@ -50,12 +50,7 @@ const ProductItem = ({ products }) => {
   // eslint-disable-next-line no-console
   console.log(productArray.length);
 
-  // should this be a forEach? No, forEach does not return a value. For loop
-  // doesn't work for some reason. Find out why. While also doesn't want to iterate.
-  // Figure out what I'm doing wrong with the loop.
   const activeProd = productArray.filter((prod) => prod.id === id);
-  // eslint-disable-next-line no-console
-  console.log(activeProd[0].id);
 
   return (
     <div>
