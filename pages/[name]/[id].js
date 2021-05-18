@@ -1,7 +1,8 @@
-import { data } from "autoprefixer";
-import PropTypes, { number } from "prop-types";
-import { useRouter } from "next/router";
-import stripeClient from "../../client";
+import { data } from 'autoprefixer';
+import PropTypes, { number } from 'prop-types';
+import { useRouter } from 'next/router';
+import stripeClient from '../../client';
+import { lte } from 'lodash';
 
 export async function getStaticProps() {
   const { data: products } = await stripeClient.products.list({
@@ -16,11 +17,21 @@ export async function getStaticProps() {
     images: prod.images,
     description: prod.description,
     name: prod.name,
-    price: "",
+    price: '',
   }));
-  productsWithPrices.forEach((prod) => {
-prod.price = 20;
-  });
+
+  function integratePrice() {
+    for (let i = 0; i < productsWithPrices.length; i++) {
+      const matchingPrice = prices.filter((price) => price.product === productsWithPrices[i].id);
+      if (matchingPrice[0] === undefined) {
+        matchingPrice[0] = { unit_amount: null };
+      }
+      console.log('match', i, matchingPrice[0].unit_amount);
+      productsWithPrices[i].price = matchingPrice[0].unit_amount;
+      console.log('sucess', productsWithPrices[i].price);
+    }
+  }
+  integratePrice();
 
   return {
     props: {
@@ -46,6 +57,17 @@ export async function getStaticPaths() {
     price: 20,
   }));
 
+  function integratePrice() {
+    for (let i = 0; i < productsWithPrices.length; i++) {
+      const matchingPrice = prices.filter((price) => price.product === productsWithPrices[i].id);
+      if (matchingPrice[0] === undefined) {
+        matchingPrice[0] = { unit_amount: null };
+      }
+      productsWithPrices[i].price = matchingPrice[0].unit_amount;
+    }
+  }
+  integratePrice();
+
   const paths = productsWithPrices.map((product) => ({
     params: {
       id: product.id,
@@ -59,40 +81,26 @@ export async function getStaticPaths() {
   };
 }
 
+const formatter = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+});
+
 const propTypes = {
   products: PropTypes.arrayOf(PropTypes.object).isRequired,
   productsWithPrices: PropTypes.arrayOf(PropTypes.object).isRequired,
-  prices: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
 const ProductItem = ({ productsWithPrices, products }) => {
-  console.log("withprices", productsWithPrices, "products", products);
-  // eslint-disable-next-line react/prop-types
   const numberOfProducts = productsWithPrices.length;
   const router = useRouter();
   const productArray = productsWithPrices.map((x) => x);
   const { name, id } = router.query; // Destructuring our router object
-  // eslint-disable-next-line no-console
-  console.log("Product Array: ", productArray);
-  // eslint-disable-next-line no-console
-  console.log('route id', 'prod id', productArray.id);
-  // eslint-disable-next-line no-console
-  console.log(numberOfProducts);
-  // eslint-disable-next-line no-console
-  console.log(productArray.length);
-
-  productArray.forEach((prod) => console.log("shom", prod.id));
 
   const activeProd = productArray.filter((prod) => prod.id === id);
-  // {
-  //   for (let i = 0; i < prod.length; i + 1)
-  //   { if (prod[i].id === id) return prod[i].id; }
-  // });
-  console.log(activeProd);
 
   return (
     <div>
-      {console.log("active", activeProd)}
       <img className="w-75 " src={activeProd[0].images} alt="" />
       <h1 className="text-center font-bold text-xl mb-2">
         {activeProd[0].name}
@@ -104,7 +112,7 @@ const ProductItem = ({ productsWithPrices, products }) => {
 
       <h2>
         <b>Price:</b>
-        {` $${activeProd[0].price}`}
+        {formatter.format(`${activeProd[0].price}`)}
       </h2>
     </div>
   );

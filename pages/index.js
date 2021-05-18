@@ -10,8 +10,7 @@ export async function getStaticProps() {
   const { data: prices } = await stripeClient.prices.list({
     active: true,
   });
-  // we want the unit_amount and .product
-  // isolate unit_amount from prices array, splice it into the product array
+
   const productsWithPrices = products.map((prod) => ({
     id: prod.id,
     images: prod.images,
@@ -20,47 +19,38 @@ export async function getStaticProps() {
     price: '',
   }));
 
-  productsWithPrices.forEach((element, i) => {
-
-    // 1. this iterates over each element once
-    // 2. for each element, compare its id value to every
-    // product value within the prices array looking for a match
-    // 3. if matched, take the unit_amount from the matching price object
-    // and ascribe that value to the price item in the active product element
-    // if (element[i].id === prices[i].products) {
-    // eslint-disable-next-line no-console
-    // const matchingPrice = prices.includes(element.id);
-    // console.log(element.id);
-    if (element.id !== prices[i].product) {
-      //   // element.price = prices[i].unit_amount;
-      console.log(prices[i].product, element.id);
+  function integratePrice() {
+    for (let i = 0; i < productsWithPrices.length; i++) {
+      const matchingPrice = prices.filter((price) => price.product === productsWithPrices[i].id);
+      if (matchingPrice[0] === undefined) {
+        matchingPrice[0] = { unit_amount: null };
+      }
+      productsWithPrices[i].price = matchingPrice[0].unit_amount;
     }
-    // }
-  });
+  }
+  integratePrice();
 
   return {
     props: {
       productsWithPrices,
       products,
-      prices
+      prices,
     },
   };
 }
 
+const formatter = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+});
+
 const propTypes = {
   productsWithPrices: PropTypes.arrayOf(PropTypes.object).isRequired,
   products: PropTypes.arrayOf(PropTypes.object).isRequired,
-  prices: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
-const Home = ({ products, prices, productsWithPrices }) => {
+const Home = ({ products, productsWithPrices }) => {
   const numberOfProducts = products.length;
-  // // eslint-disable-next-line no-console
-  // console.log('prod', products);
-  // // eslint-disable-next-line no-console
-  // console.log('Price', prices);
-  // // eslint-disable-next-line no-console
-  // console.log(productsWithPrices);
   return (
     <div className="container mx-auto w-full">
       <Head>
@@ -97,7 +87,7 @@ const Home = ({ products, prices, productsWithPrices }) => {
 
                   <h2>
                     <b>Price:</b>
-                    {` $${obj.price}`}
+                    {formatter.format(`${obj.price}`)}
                   </h2>
                 </a>
               </Link>
