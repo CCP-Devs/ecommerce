@@ -19,9 +19,15 @@ export async function getStaticProps() {
     price: '',
   }));
 
+  // productsWithPrices.forEach((element) => {
+  //   const matchingPrice = prices.find((price) => price.product === element.id);
+  //   element.price = matchingPrice.unit_amount;
+  // });
+
   function integratePrice() {
     for (let i = 0; i < productsWithPrices.length; i++) {
       const matchingPrice = prices.filter((price) => price.product === productsWithPrices[i].id);
+      console.log(productsWithPrices.length);
       if (matchingPrice[0] === undefined) {
         matchingPrice[0] = { unit_amount: null };
       }
