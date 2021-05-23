@@ -92,7 +92,7 @@ const Home = ({ products, productsWithPrices }) => {
                   </h2>
 
                   <h2>
-                    <b>Price:</b>
+                    <b>Price: </b>
                     {formatter.format(`${obj.price}`)}
                   </h2>
                 </a>
