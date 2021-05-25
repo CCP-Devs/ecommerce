@@ -7,22 +7,58 @@ export async function getStaticProps() {
   const { data: products } = await stripeClient.products.list({
     active: true,
   });
+  const { data: prices } = await stripeClient.prices.list({
+    active: true,
+  });
+
+  const productsWithPrices = products.map((prod) => ({
+    id: prod.id,
+    images: prod.images,
+    description: prod.description,
+    name: prod.name,
+    price: "",
+  }));
+
+  // productsWithPrices.forEach((element) => {
+  //   const matchingPrice = prices.find((price) => price.product === element.id);
+  //   element.price = matchingPrice.unit_amount;
+  // });
+
+  function integratePrice() {
+    for (let i = 0; i < productsWithPrices.length; i++) {
+      const matchingPrice = prices.filter(
+        (price) => price.product === productsWithPrices[i].id
+      );
+      console.log(productsWithPrices.length);
+      if (matchingPrice[0] === undefined) {
+        matchingPrice[0] = { unit_amount: null };
+      }
+      productsWithPrices[i].price = matchingPrice[0].unit_amount;
+    }
+  }
+  integratePrice();
 
   return {
     props: {
+      productsWithPrices,
       products,
+      prices,
     },
   };
 }
 
+const formatter = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+});
+
 const propTypes = {
+  productsWithPrices: PropTypes.arrayOf(PropTypes.object).isRequired,
   products: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
-const Home = ({ products }) => {
+const Home = ({ products, productsWithPrices }) => {
   const numberOfProducts = products.length;
-  // eslint-disable-next-line no-console
-  console.log(products);
   return (
     <div className="container mx-auto w-full">
       <Head>
@@ -41,31 +77,33 @@ const Home = ({ products }) => {
           {numberOfProducts}
         </span>
         <ul className="items-bottom min-h-full p-10 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 gap-5 ">
-          {products.map((obj) => {
-            // eslint-disable-next-line no-console
-            console.info("Product Objects from Stripe: ", obj);
-            return (
-              <li className=" p-4 max-w-sm rounded overflow-hidden shadow-lg border-t">
-                <Link href="/product">
-                  <a>
-                    <img className="w-full " src={obj.images} alt="" />
-                    <h1 className="text-center font-bold text-xl mb-2">
-                      {obj.name}
-                    </h1>
-                    <h2>
-                      <b>Description: </b>
-                      {obj.description}
-                    </h2>
+          {productsWithPrices.map((obj) => (
+            <li
+              key={obj.id}
+              className=" p-4 max-w-sm rounded overflow-hidden shadow-lg border-t"
+            >
+              <Link href={`/${obj.name}/${obj.id}`}>
+                <a>
+                  <img className="w-full " src={obj.images} alt="" />
+                  <h1 className="text-center font-bold text-xl mb-2">
+                    {obj.name}
+                  </h1>
+                  <h2>
+                    <b>Description: </b>
+                    {obj.description}
+                  </h2>
 
-                    <h2>
-                      <b>Price:</b>
-                      {obj.data}
-                    </h2>
-                  </a>
-                </Link>
-              </li>
-            );
-          })}
+                  <h2 className="pb-2">
+                    <b>Price: </b>
+                    {formatter.format(`${obj.price}`)}
+                  </h2>
+                </a>
+              </Link>
+              <button type="button" className="pr-2 pl-2 border-2 border-black">
+                Add to Cart
+              </button>
+            </li>
+          ))}
         </ul>
       </main>
       <footer className=" bg-gray-200 mt-5 w-full flex flex-col justify-center items-center">
