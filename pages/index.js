@@ -1,7 +1,7 @@
-import Link from 'next/link';
-import PropTypes from 'prop-types';
-import Head from 'next/head';
-import stripeClient from '../client';
+import Link from "next/link";
+import PropTypes from "prop-types";
+import Head from "next/head";
+import stripeClient from "../client";
 
 export async function getStaticProps() {
   const { data: products } = await stripeClient.products.list({
@@ -16,7 +16,7 @@ export async function getStaticProps() {
     images: prod.images,
     description: prod.description,
     name: prod.name,
-    price: '',
+    price: "",
   }));
 
   // productsWithPrices.forEach((element) => {
@@ -26,7 +26,9 @@ export async function getStaticProps() {
 
   function integratePrice() {
     for (let i = 0; i < productsWithPrices.length; i++) {
-      const matchingPrice = prices.filter((price) => price.product === productsWithPrices[i].id);
+      const matchingPrice = prices.filter(
+        (price) => price.product === productsWithPrices[i].id
+      );
       console.log(productsWithPrices.length);
       if (matchingPrice[0] === undefined) {
         matchingPrice[0] = { unit_amount: null };
@@ -45,9 +47,9 @@ export async function getStaticProps() {
   };
 }
 
-const formatter = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD',
+const formatter = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
 });
 
 const propTypes = {
@@ -91,12 +93,15 @@ const Home = ({ products, productsWithPrices }) => {
                     {obj.description}
                   </h2>
 
-                  <h2>
+                  <h2 className="pb-2">
                     <b>Price: </b>
                     {formatter.format(`${obj.price}`)}
                   </h2>
                 </a>
               </Link>
+              <button type="button" className="pr-2 pl-2 border-2 border-black">
+                Add to Cart
+              </button>
             </li>
           ))}
         </ul>
