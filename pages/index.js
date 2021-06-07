@@ -3,6 +3,19 @@ import PropTypes from "prop-types";
 import Head from "next/head";
 import stripeClient from "../client";
 
+
+/* 
+STEPS TO IMPLEMENT CART
+1. create a cart component that appears when a mycart button is clicked
+  1b: cart component will have a state that begins as an empty array
+2. create functionality for each product that adds it to the cart
+  2b: button onclick with update cart state by adding prod to the cart array            
+  using setCart useState()
+3. create useReducer hook that takes all products within the cart and totals their prices
+for checkout
+
+*/
+
 export async function getStaticProps() {
   const { data: products } = await stripeClient.products.list({
     active: true,
@@ -19,10 +32,6 @@ export async function getStaticProps() {
     price: "",
   }));
 
-  // productsWithPrices.forEach((element) => {
-  //   const matchingPrice = prices.find((price) => price.product === element.id);
-  //   element.price = matchingPrice.unit_amount;
-  // });
 
   function integratePrice() {
     for (let i = 0; i < productsWithPrices.length; i++) {
