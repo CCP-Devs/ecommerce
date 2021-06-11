@@ -1,7 +1,20 @@
-import Link from "next/link";
-import PropTypes from "prop-types";
-import Head from "next/head";
-import stripeClient from "../client";
+import Link from 'next/link';
+import PropTypes from 'prop-types';
+import React from 'react';
+import Head from 'next/head';
+import Image from 'next/image';
+import stripeClient from '../client';
+
+/*
+STEPS TO IMPLEMENT CART
+1. create a cart component that appears when a mycart button is clicked
+  1b: cart component will have a state that begins as an empty array
+2. create functionality for each product that adds it to the cart
+  2b: button onclick with update cart state by adding prod to the cart array
+3. create useReducer hook that takes all products within the cart and totals their prices
+for checkout
+
+*/
 
 export async function getStaticProps() {
   const { data: products } = await stripeClient.products.list({
@@ -16,13 +29,8 @@ export async function getStaticProps() {
     images: prod.images,
     description: prod.description,
     name: prod.name,
-    price: "",
+    price: '',
   }));
-
-  // productsWithPrices.forEach((element) => {
-  //   const matchingPrice = prices.find((price) => price.product === element.id);
-  //   element.price = matchingPrice.unit_amount;
-  // });
 
   function integratePrice() {
     for (let i = 0; i < productsWithPrices.length; i++) {
@@ -47,18 +55,24 @@ export async function getStaticProps() {
   };
 }
 
-const formatter = new Intl.NumberFormat("en-US", {
-  style: "currency",
-  currency: "USD",
+const formatter = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
 });
 
 const propTypes = {
   productsWithPrices: PropTypes.arrayOf(PropTypes.object).isRequired,
   products: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
+function Cart(cartUi) {
+  // eslint-disable-next-line no-param-reassign
+  const [showCart, setShowCart] = React.useState((cartUi.display = 'none'));
+}
 
-const Home = ({ products, productsWithPrices }) => {
-  const numberOfProducts = products.length;
+function Home({ productsWithPrices }) {
+  // const [showCart, setShowCart] = React.useState("none");
+
+  const numberOfProducts = productsWithPrices.length;
   return (
     <div className="container mx-auto w-full">
       <Head>
@@ -69,11 +83,26 @@ const Home = ({ products, productsWithPrices }) => {
         <h1 className="title text-2xl w-full text-center">
           NextJS and Tailwind Starter
         </h1>
+        <Cart //supposed to render either a "my cart" button or the cartUi.
+          cartUi={(
+            <button
+              type="button"
+              className="float-right"
+              onClick={() => {
+                console.log('getting somewhere')
+                //setShowCart((cartUi.display = 'block'));
+              }}
+            >
+              <Image src="/cart.png" height="25px" width="25px" />
+              My Cart
+            </button>
+          )}
+        />
       </header>
       <main className="my-5 flex flex-col justify-center items-center">
         {/* "my-5 flex flex-col justify-center items-center" */}
         <span>
-          Number of total Products from stripe:
+          Number of total Products from stripe
           {numberOfProducts}
         </span>
         <ul className="items-bottom min-h-full p-10 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 gap-5 ">
@@ -111,7 +140,7 @@ const Home = ({ products, productsWithPrices }) => {
       </footer>
     </div>
   );
-};
+}
 
 Home.propTypes = propTypes;
 export default Home;
